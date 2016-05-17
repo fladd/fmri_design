@@ -51,3 +51,13 @@ We will create .prt and .sdm files for one random single-run TR-locked (TR=2.0 s
     ```
     
 This results in the files `Stimulation.prt` and `Stimulation.sdm`, which can be loaded into BrainVoyager for further inspection.
+
+## TODO
+```
+[ ] - Convert output of optseq2 to .prt/.sdm
+[ ] - Create regressors plots of .sdm
+[ ] - Create contrast plits of .sdm
+[ ] - Evaluate .sdm in terms of regressor correlation
+[ ] - Evaluate .sdm in terms of detection power (main effects and contrasts)
+[ ] - Evaluate .sdm in terms of efficiency (i.e. HRF estimation)
+```
