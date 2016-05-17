@@ -19,7 +19,7 @@ Currently, two following modules are available:
   
   Each timing file has the following naming convention: `*_<condition_name>.*` (e.g. `myexp_condition1.txt`).
   
-  Timing files can, for instance result from the `make_random_timing.py` script.
+  Timing files can, for instance result from the `make_random_timing.py` script (or from an AFNI `@stim_analyze` script, to bring already optimized designs into BrainVoyager).
 
 ## Example
 
@@ -54,10 +54,11 @@ This results in the files `Stimulation.prt` and `Stimulation.sdm`, which can be 
 
 ## TODO
 ```
-[ ] - Convert output of optseq2 to .prt/.sdm
+[ ] - Convert output of optseq2 to .prt/.sdm?
 [ ] - Create regressors plots of .sdm
 [ ] - Create contrast plits of .sdm
 [ ] - Evaluate .sdm in terms of regressor correlation
 [ ] - Evaluate .sdm in terms of detection power (main effects and contrasts)
 [ ] - Evaluate .sdm in terms of efficiency (i.e. HRF estimation)
+[ ] - Iteratively create many designs and find/keep optimal ones (see AFNI @stim_analyze)
 ```
