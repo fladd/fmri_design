@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+
+# NOTE:
+# The following file is part of AFNI (https://afni.nimh.nih.gov/afni/) and
+# licensed under GPL (https://afni.nimh.nih.gov/pub/dist/src/README.copyright).
+# No modification have been made to this file (besides this note).
+
+
 import sys, random, os, math
 import option_list as OL, afni_util as UTIL
 
