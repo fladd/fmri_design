@@ -19,7 +19,7 @@ Currently, two following modules are available:
   
   Each timing file has the following naming convention: `*_<condition_name>.*` (e.g. `myexp_condition1.txt`).
   
-  Timing files can, for instance result from the `make_random_timing.py` script (or from an AFNI `@stim_analyze` script, to bring already optimized designs into BrainVoyager).
+  Timing files can, for instance result from the `make_random_timing.py` script (or from an adapted AFNI [`@stim_analyze`](https://afni.nimh.nih.gov/pub/dist/edu/data/CD.expanded/AFNI_data6/ht03/@stim_analyze) script, to bring already optimized designs into BrainVoyager).
 
 ## Example
 
