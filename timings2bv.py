@@ -13,7 +13,7 @@ Each timing file has the following naming convention:
 
 
 __author__ = 'Florian Krause <florian.krause@fladd.de>'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 
 import os
@@ -34,7 +34,7 @@ def _create_colours(n):
         colours.append([int(x * 255) for x in colorsys.hls_to_rgb(h, l, s)])
     return colours
 
-def hrf(tr, p=[6,16,1,1,6,0,32], brain_voyager=True):
+def hrf(tr, p=[6,16,1,1,6,0,32]):
     """Create an HRF from two gamma functions.
 
     Paramters
@@ -54,8 +54,6 @@ def hrf(tr, p=[6,16,1,1,6,0,32], brain_voyager=True):
         p[5] - onset (seconds)                               0
         p[6] - length of kernel (seconds)                   32
 
-    brain_voyager : bool, optional
-        if True, sample the HRF starting from 0+TR, instead 0 (default = True)
 
     """
 
@@ -72,8 +70,6 @@ def hrf(tr, p=[6,16,1,1,6,0,32], brain_voyager=True):
 
     # Sample in volumes
     good_pts = numpy.array(range(numpy.int((p[6] + tr) / tr))) * fMRI_T
-    if brain_voyager:
-        good_pts = good_pts[1:]
     hrf = hrf[[int(x) for x in list(good_pts)]]
     hrf = hrf / numpy.sum(hrf);
 
@@ -81,10 +77,10 @@ def hrf(tr, p=[6,16,1,1,6,0,32], brain_voyager=True):
 
 def convert2prt(input_mask, run_length, tr, msec=False, durations=None, output=None):
     if durations is None:
-        if msec:
-            durations = 0.001
-        else:
+        if not msec:
             durations = 0
+        else:
+            durations = 0.001
     if output is None:
         output = "Simulation"
 
@@ -93,7 +89,7 @@ def convert2prt(input_mask, run_length, tr, msec=False, durations=None, output=N
         f.write("\n")
         f.write("FileVersion:        3\n")
         f.write("\n")
-        if tr is not None:
+        if not msec:
             f.write("ResolutionOfTime:   Volume\n")
         else:
             f.write("ResolutionOfTime:   msec\n")
@@ -120,13 +116,12 @@ def convert2prt(input_mask, run_length, tr, msec=False, durations=None, output=N
                 data = c.readline()
                 events = [float(x) for x in data.strip().split(" ")]
                 f.write("\n")
-                #f.write(condition.split("_")[-1].strip(".1D") + "\n")
                 f.write(condition.split("_")[-1].split(".")[0] + "\n")
                 f.write(repr(len(events)) + "\n")
                 for e, event in enumerate(events):
                     if not msec:
-                        begin = int(event) / tr
-                        end = begin + durations / tr
+                        begin = int(event / tr) + 1
+                        end = int(begin + (durations / tr) - 1)
                     else:
                         begin = int(event * 1000)
                         end = int(begin + durations * 1000)
@@ -159,9 +154,8 @@ def convert2sdm(input_mask, run_length, tr, msec=False, durations=None, output=N
             tmp = [0] * int(run_length / tr)
             for c,x in enumerate(regressor):
                 idx = int(x / tr)
-                tmp[idx] = 1
                 for d in range(idx, idx + int(durations / tr)):
-                    tmp[d+1] = 1
+                    tmp[d] = 1
             hrf_ = hrf(tr)
             cregressor = numpy.convolve(tmp, hrf_)[0:len(tmp)]
             cregressor = ["{:.6f}".format(round(x, 6)) for x in cregressor]
@@ -173,9 +167,8 @@ def convert2sdm(input_mask, run_length, tr, msec=False, durations=None, output=N
             tmp = [0] * (run_length * 1000)
             for c,x in enumerate(regressor):
                 idx = int(float(x) * 1000)
-                tmp[idx] = 1
                 for d in range(idx, idx + int(durations * 1000)):
-                    tmp[d+1] = 1
+                    tmp[d] = 1
             hrf_ = hrf(0.001)
             cregressor = numpy.convolve(tmp, hrf_)[0:len(tmp)]
             cregressor = cregressor[0::int(tr*1000)]
@@ -194,7 +187,6 @@ def convert2sdm(input_mask, run_length, tr, msec=False, durations=None, output=N
         f.write("   ".join(
             [str(x).strip("[]").replace(",","") for x in colours]) + \
                 "   255 255 255\n")
-        #names = [x.split("_")[-1].strip(".1D") for x in files]
         names = [x.split("_")[-1].split(".")[0] for x in files]
         f.write(" ".join(['"{0}"'.format(x) for x in names]) + ' "Constant"\n')
         for c,_ in enumerate(convolved[0]):
